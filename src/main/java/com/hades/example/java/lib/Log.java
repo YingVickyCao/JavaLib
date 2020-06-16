@@ -8,4 +8,5 @@ public final class Log {
     public static void e(String tag, String msg) {
         System.err.println(tag + ":" + msg);
     }
+
 }
