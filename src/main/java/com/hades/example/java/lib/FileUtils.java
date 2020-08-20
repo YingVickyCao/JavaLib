@@ -1,13 +1,19 @@
 package com.hades.example.java.lib;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class FileUtils {
+    private Gson _gson;
+
     /**
      * @param currentZipFilePath zip_dir/full.zip
      * @param destDir            zip_dir/full
@@ -82,5 +88,56 @@ public class FileUtils {
 
     public void createDirsForSubDirsInZip(File newFile) throws IOException {
         new File(newFile.getParent()).mkdirs();
+    }
+
+    /**
+     * @param jsonFileName json in (src/main/resources/ or src/test/resources/)
+     */
+    public InputStream getResourceAsStream(String jsonFileName) {
+        return getClass().getClassLoader().getResourceAsStream(jsonFileName);
+//        return TestJson.class.getClassLoader().getResourceAsStream(jsonFileName);
+    }
+
+    public String convertStreamToStr(InputStream inputStream) {
+        if (null == inputStream) {
+            System.err.println("inputStream = null");
+            return null;
+        }
+        ByteArrayOutputStream result = null;
+        try {
+            result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            return result.toString(StandardCharsets.UTF_8.name());
+        } catch (Exception ex) {
+            return null;
+        } finally {
+            try {
+                if (null != inputStream) {
+                    inputStream.close();
+                }
+
+                if (null != result) {
+                    result.close();
+                }
+            } catch (IOException ex) {
+                System.err.println(ex);
+            }
+        }
+    }
+
+    public  <T> T convertJsonToBean(String jsonContent, Class<T> t) throws JsonSyntaxException {
+        if (null == _gson) {
+            _gson = new Gson();
+        }
+        return _gson.fromJson(jsonContent, t);
+    }
+
+    public String readFileAsString(String file) throws Exception {
+        URL url = getClass().getClassLoader().getResource(file);
+        return new String(Files.readAllBytes(Paths.get(url.getPath())));
     }
 }
