@@ -68,7 +68,84 @@ public class FileUtils {
         }
     }
 
-    public void checkDestDirIsExist(String destDir) throws IOException {
+    // TODO: 2020/10/28
+    public void zip() {
+
+    }
+
+    /**
+     * Convert bytes to a file.
+     *
+     * @param bytes    bytes of the file
+     * @param fileDir e.g.,  ./tmp
+     * @param fileName e.g.,  QRCode_1.png
+     */
+    public static void saveFile(byte[] bytes, String fileDir, String fileName) {
+        BufferedOutputStream bos = null;
+        FileOutputStream fos = null;
+        try {
+            FileUtils.checkDestDirIsExist(fileDir);
+            /**
+             * e.g., ./tmp/QRCode_1.png
+             */
+            File file = new File(fileDir + "/" + fileName);
+            fos = new FileOutputStream(file);
+            bos = new BufferedOutputStream(fos);
+            bos.write(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Convert bytes to a file.
+     *
+     * @param bytes        bytes of the file
+     * @param fileFullName e.g.,  ./tmp/QRCode_1.png
+     */
+    public static void saveFile(byte[] bytes, String fileFullName) {
+        String filePath = fileFullName.substring(0, fileFullName.lastIndexOf("/"));
+        String fileName = fileFullName.substring(fileFullName.lastIndexOf("/") + 1);
+        saveFile(bytes, filePath, fileName);
+    }
+
+    public static byte[] getBytesOfFile(String filePath) {
+        File file = new File(filePath);
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+            byte[] b = new byte[1024];
+            int n;
+            while ((n = fis.read(b)) != -1) {
+                bos.write(b, 0, n);
+            }
+            fis.close();
+            byte[] data = bos.toByteArray();
+            bos.close();
+            return data;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static void checkDestDirIsExist(String destDir) throws IOException {
         File dir = new File(destDir);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -129,7 +206,7 @@ public class FileUtils {
         }
     }
 
-    public  <T> T convertJsonToBean(String jsonContent, Class<T> t) throws JsonSyntaxException {
+    public <T> T convertJsonToBean(String jsonContent, Class<T> t) throws JsonSyntaxException {
         if (null == _gson) {
             _gson = new Gson();
         }
