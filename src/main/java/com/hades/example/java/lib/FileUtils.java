@@ -77,7 +77,7 @@ public class FileUtils {
      * Convert bytes to a file.
      *
      * @param bytes    bytes of the file
-     * @param fileDir e.g.,  ./tmp
+     * @param fileDir  e.g.,  ./tmp
      * @param fileName e.g.,  QRCode_1.png
      */
     public static void saveFile(byte[] bytes, String fileDir, String fileName) {
@@ -119,9 +119,29 @@ public class FileUtils {
      * @param fileFullName e.g.,  ./tmp/QRCode_1.png
      */
     public static void saveFile(byte[] bytes, String fileFullName) {
-        String filePath = fileFullName.substring(0, fileFullName.lastIndexOf("/"));
-        String fileName = fileFullName.substring(fileFullName.lastIndexOf("/") + 1);
-        saveFile(bytes, filePath, fileName);
+        saveFile(bytes, splitFilePath(fileFullName), splitFileName(fileFullName));
+    }
+
+    /**
+     * @param fileFullName e.g.,  ./tmp/QRCode_1.png
+     * @return e.g.,  ./tmp
+     */
+    public static String splitFilePath(String fileFullName) {
+        if (null == fileFullName || fileFullName.isEmpty()) {
+            return null;
+        }
+        return fileFullName.substring(0, fileFullName.lastIndexOf("/"));
+    }
+
+    /**
+     * @param fileFullName e.g.,  ./tmp/QRCode_1.png
+     * @return e.g.,  QRCode_1.png
+     */
+    public static String splitFileName(String fileFullName) {
+        if (null == fileFullName || fileFullName.isEmpty()) {
+            return null;
+        }
+        return fileFullName.substring(fileFullName.lastIndexOf("/") + 1);
     }
 
     public static byte[] getBytesOfFile(String filePath) {
