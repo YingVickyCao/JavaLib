@@ -46,4 +46,18 @@ public class FileUtilsTest {
             exception.printStackTrace();
         }
     }
+
+    @Test
+    public void saveFile() {
+        String content = "QR Code Example 苹果梨hellopgfh@123.com";
+        FileUtils.saveFile(content.getBytes(), "./tmp/string.txt");
+    }
+
+    @Test
+    public void getBytesOfFile() {
+        byte[] bytes = FileUtils.getBytesOfFile("./src/test/resources/string.txt");
+        String content = new String(bytes);
+        // QR Code Example 苹果梨hellopgfh@123.com
+        System.err.println(content);
+    }
 }
