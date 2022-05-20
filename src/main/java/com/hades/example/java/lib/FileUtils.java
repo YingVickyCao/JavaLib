@@ -8,6 +8,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -236,5 +238,36 @@ public class FileUtils {
     public String readFileAsString(String file) throws Exception {
         URL url = getClass().getClassLoader().getResource(file);
         return new String(Files.readAllBytes(Paths.get(url.getPath())));
+    }
+
+    public String bytesToHexString(byte[] bytes) {
+        // http://stackoverflow.com/questions/332079
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bytes.length; i++) {
+            String hex = Integer.toHexString(0xFF & bytes[i]);
+            if (hex.length() == 1) {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * A hashing method that changes a string (like a URL) into a hash suitable for using as a
+     * disk filename.
+     */
+    public String hashKeyForDisk(String key) {
+        String cacheKey;
+        try {
+            final MessageDigest mDigest = MessageDigest.getInstance("MD5");
+            mDigest.update(key.getBytes());
+            cacheKey = bytesToHexString(mDigest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            cacheKey = String.valueOf(key.hashCode());
+        }
+
+        System.out.println("hashKeyForDisk: key=" + key + ",cacheKey=" + cacheKey);
+        return cacheKey;
     }
 }
