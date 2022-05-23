@@ -8,8 +8,8 @@ public class FileUtilsTest {
 
     @Test
     public void unzip() {
-        String zipFilePath = "zip_dir/full.zip";
-        String destDir = "zip_dir/full";
+        String zipFilePath = "zip_dir/abc.zip";
+        String destDir = "zip_dir/abc";
         try {
             new FileUtils().unzip(zipFilePath, destDir, true);
         } catch (Exception exception) {

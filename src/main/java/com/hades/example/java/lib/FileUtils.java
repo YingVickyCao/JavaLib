@@ -17,13 +17,13 @@ public class FileUtils {
     private Gson _gson;
 
     /**
-     * @param currentZipFilePath zip_dir/full.zip
-     * @param destDir            zip_dir/full
+     * @param currentZipFilePath path/full.zip
+     * @param destDir            path/full
      */
     public void unzip(String currentZipFilePath, String destDir, boolean isDeleteZip) {
         FileInputStream fis = null;
         ZipInputStream zis = null;
-        ZipEntry zipEntry;
+        ZipEntry zipEntry = null;
         byte[] buffer = new byte[1024];
 
         try {
@@ -33,12 +33,15 @@ public class FileUtils {
             while ((zipEntry = zis.getNextEntry()) != null) {
                 String fileName = zipEntry.getName();
                 if (zipEntry.isDirectory()) {
-                    File newFile = new File(destDir + File.separator + fileName);
+//                    File newFile = new File(destDir + File.separator + fileName);
+                    File newFile = new File(destDir, fileName);
+                    checkZipPathTraversalVulnerability(newFile, destDir);
                     System.out.println("Unzipping to " + newFile.getAbsolutePath());
                     createDirsForSubDirsInZip(newFile);
                     continue;
                 }
-                File newFile = new File(destDir + File.separator + fileName);
+                File newFile = new File(destDir, fileName);
+                checkZipPathTraversalVulnerability(newFile, destDir);
                 System.out.println("Unzipping to " + newFile.getAbsolutePath());
                 createDirsForSubDirsInZip(newFile);
                 FileOutputStream fos = new FileOutputStream(newFile);
@@ -54,7 +57,11 @@ public class FileUtils {
                 deleteDir(currentZipFilePath);
             }
             zis.closeEntry();
+            zis.close();
+            fis.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
@@ -70,9 +77,13 @@ public class FileUtils {
         }
     }
 
-    // TODO: 2020/10/28
-    public void zip() {
+    private void checkZipPathTraversalVulnerability(File out, String destDir) throws Exception {
+        String canonicalPath = out.getCanonicalPath();
+        System.out.println("Check isHaveZipPathIssuer: " + canonicalPath + "," + destDir);
 
+        if (!canonicalPath.startsWith(destDir)) {
+            throw new Exception(String.format("Zip path Traversal Vulnerability with %s", canonicalPath));
+        }
     }
 
     /**
