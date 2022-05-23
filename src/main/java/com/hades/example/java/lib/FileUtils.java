@@ -35,13 +35,13 @@ public class FileUtils {
                 if (zipEntry.isDirectory()) {
 //                    File newFile = new File(destDir + File.separator + fileName);
                     File newFile = new File(destDir, fileName);
-                    checkZipPathTraversalVulnerability(newFile, destDir);
+                    checkPath(newFile, destDir);
                     System.out.println("Unzipping to " + newFile.getAbsolutePath());
                     createDirsForSubDirsInZip(newFile);
                     continue;
                 }
                 File newFile = new File(destDir, fileName);
-                checkZipPathTraversalVulnerability(newFile, destDir);
+                checkPath(newFile, destDir);
                 System.out.println("Unzipping to " + newFile.getAbsolutePath());
                 createDirsForSubDirsInZip(newFile);
                 FileOutputStream fos = new FileOutputStream(newFile);
@@ -77,11 +77,12 @@ public class FileUtils {
         }
     }
 
-    private void checkZipPathTraversalVulnerability(File out, String destDir) throws Exception {
+    // Zip Path Traversal Vulnerability
+    private void checkPath(File out, String destDir) throws Exception {
         String canonicalPath = out.getCanonicalPath();
         System.out.println("Check isHaveZipPathIssuer: " + canonicalPath + "," + destDir);
 
-        if (!canonicalPath.startsWith(destDir)) {
+        if (!canonicalPath.startsWith(new File(destDir).getCanonicalPath())) {
             throw new Exception(String.format("Zip path Traversal Vulnerability with %s", canonicalPath));
         }
     }
