@@ -23,7 +23,7 @@ public class FileUtilsTest {
             FileUtils fileUtils = new FileUtils();
             InputStream inputStream = fileUtils.getResourceAsStream("words.json");
 
-            String json = fileUtils.convertStreamToStr(inputStream);
+            String json = fileUtils.convert(inputStream);
             System.out.println(json);
 
             Words bean = fileUtils.convertJsonToBean(json, Words.class);

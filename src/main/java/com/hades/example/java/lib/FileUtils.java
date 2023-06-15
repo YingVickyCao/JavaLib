@@ -14,6 +14,18 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class FileUtils {
+    private static FileUtils mInstance;
+
+    public FileUtils() {
+    }
+
+    public static FileUtils getInstance() {
+        if (null == mInstance) {
+            mInstance = new FileUtils();
+        }
+        return mInstance;
+    }
+
     private Gson _gson;
 
     /**
@@ -209,7 +221,7 @@ public class FileUtils {
 //        return TestJson.class.getClassLoader().getResourceAsStream(jsonFileName);
     }
 
-    public String convertStreamToStr(InputStream inputStream) {
+    public String convert(InputStream inputStream) {
         if (null == inputStream) {
             System.err.println("inputStream = null");
             return null;
@@ -227,9 +239,7 @@ public class FileUtils {
             return null;
         } finally {
             try {
-                if (null != inputStream) {
-                    inputStream.close();
-                }
+                inputStream.close();
 
                 if (null != result) {
                     result.close();
