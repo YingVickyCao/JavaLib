@@ -1,22 +1,13 @@
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
 
-//repositories {
-//    // google()
-//    maven { url 'https://maven.aliyun.com/repository/google' }
-//
-////    mavenCentral()
-//    maven { url 'https://maven.aliyun.com/repository/central' }
-//
-//    // jcenter()
-//    maven { url 'https://maven.aliyun.com/repository/public' }
-//}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.google.code.gson:gson:${rootProject.ext.gson_version}"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
 
-    testImplementation "junit:junit:${rootProject.ext.junit_version}"
+    implementation libs.google.gson
+    implementation libs.kotlin.stdlib
+
+    testImplementation libs.test.junit
 }
-sourceCompatibility = "8"
-targetCompatibility = "8"
+sourceCompatibility = "17"
+targetCompatibility = "17"
