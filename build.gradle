@@ -9,5 +9,5 @@ dependencies {
 
     testImplementation libs.test.junit
 }
-sourceCompatibility rootProject.ext.sourceCompatibility
-targetCompatibility rootProject.ext.targetCompatibility
+sourceCompatibility  = rootProject.ext.sourceCompatibility
+targetCompatibility  = rootProject.ext.targetCompatibility
